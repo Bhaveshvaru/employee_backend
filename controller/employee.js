@@ -18,9 +18,6 @@ exports.createEmployee=(req,res)=>{
       res.status(400).json({message:"File was not found"});
       return;
   }
-  // Create custom filename
-  //console.log("files",file)
-
   let shortId=shortid.generate()
   file.name = `photo_${shortId}_${file.name}`;
 
@@ -29,9 +26,9 @@ exports.createEmployee=(req,res)=>{
       console.error(err);
       return res.status(500).json({message:"problem with image"})
     }
+
   let photo=file.name;//.file
  
-
   const employee = new Employee({
     employeename,employeeaddress,email,dateofbirth,phone,bio,
     photo
@@ -64,3 +61,66 @@ exports.createEmployee=(req,res)=>{
         return res.status(200).json(result);
       });
   };
+
+   //search employee by ID controller
+   exports.getEmployeeById=(req,res,next)=>{
+    const id= req.params.id;
+    Employee.findById(id)
+    .exec((error,data)=>{
+    if (error) return res.status(400).json({ error });
+    if(data)  res.status(201).json({data,
+   }); 
+
+  })
+  }
+
+    //delete employee controller
+exports.deleteEmployee =(req,res,next)=>{
+  let id =req.params.id
+  Employee.findByIdAndDelete(id)
+  .exec((err,data)=>{
+    if (err) {
+        return res.status(400).json({
+          error: "Failed to delete ",
+          err
+        });
+      }
+      res.json({
+        message: "Employee Deleted..",
+        data
+      });
+  })
+
+}
+
+
+//update employee Controller
+exports.updateEmployee=(req,res,next)=>{
+  const id= req.params.id
+  const file = req.files.photo
+  if(!req.files)
+  {
+      res.status(400).json({msg:"Image was not found"});
+      return;
+  }
+  
+  let shortId=shortid.generate()
+  file.name = `photo_${shortId}_${file.name}`;
+
+  file.mv(`uploads/${file.name}`, async err => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({err:"problem with image"})
+    }
+  })
+    
+  let photo=file.name;//.file
+  const reqd=req.body;
+  const reqData= {reqd,photo};
+  Employee.findByIdAndUpdate(id,reqData,{new:true})
+  .exec((error,data)=>{
+     if (error) return res.status(400).json({ error });
+     if(data)  res.status(201).json({ msg:"employee updated successfully!",data,
+    }); 
+  })
+}
