@@ -12,11 +12,13 @@
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "express-fileupload": "^1.2.0",
     "express-upload": "^0.1.0",
     "formidable": "^1.2.2",
     "lodash": "^4.17.20",
     "mongoose": "^5.10.13",
-    "remove": "^0.1.5"
+    "remove": "^0.1.5",
+    "shortid": "^2.2.16"
   },
   "devDependencies": {
     "nodemon": "^2.0.6"
