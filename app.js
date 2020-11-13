@@ -7,7 +7,7 @@ const dotenv = require('dotenv');
 const fileUpload = require("express-fileupload")
 
 //config
-dotenv.config({ path: './config.env' });
+dotenv.config({ path: './config/config.env' });
 
 //routes
 const Routes = require("./route/employee");
