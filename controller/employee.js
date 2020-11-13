@@ -7,16 +7,23 @@ const shortid = require('shortid');
 
 //create Employee controller
 exports.createEmployee=(req,res)=>{
+
   const {employeename,employeeaddress,email,dateofbirth,phone,bio } = req.body;
   if(!employeename || !employeeaddress || !email || !dateofbirth || !phone || !bio){
    return res.status(400).json({message:"Please enter all fields!"})
   }
+  if(!req.files)
+  {
+      res.status(400).json({message:"Image was not found"});
+      return;
+  }
 
   const file = req.files.photo
-  if(!file)
+  
+  if(file.mimetype !== 'image/jpeg')
   {
-      res.status(400).json({message:"File was not found"});
-      return;
+    res.status(400).json({message:"Please upload proper image!"});
+    return;
   }
   let shortId=shortid.generate()
   file.name = `photo_${shortId}_${file.name}`;
@@ -34,18 +41,29 @@ exports.createEmployee=(req,res)=>{
     photo
   });
  
-  employee.save((error, data) => {
-    if (error) return res.status(400).json(error);
-    if (data) {
-      res.status(201).json({ msg:"employee added successfully!",data,
-    });  
-    }
-  });
-});
+    employee.save((error, data) => {
+    
+      if(error !== null){
+        if(error.code === 11000){
+          return res.status(400).json({message:"Email already Exists!"});
+        }
+        if( error.errors.phone && error.errors.phone.reason.code === "ERR_ASSERTION"){
+         return res.status(400).json({message:"Please Input number in Phone Field."});
+       }
+       if( error.errors.dateofbirth && error.errors.dateofbirth.properties.type==="max")
+       {
+        return res.status(400).json({message:"Future date are not Valid.Please add Proper date."});
+       }
+      }
+      
+     if(error) return res.status(400).json({message:"something went wrong!",error});
 
-
-
-
+      if (data) {
+        res.status(201).json({ message:"employee added successfully!",data,
+      });  
+      }
+    });
+ });
 }
 
   //get Controller
@@ -54,7 +72,7 @@ exports.createEmployee=(req,res)=>{
       .exec((err, data) => {
         if (err) {
           return res.status(400).json({
-            error: "No Record for Found"
+            error: "No Record Found"
           });
         }
         const result = data.reverse();
@@ -120,7 +138,7 @@ exports.updateEmployee=(req,res,next)=>{
   Employee.findByIdAndUpdate(id,reqData,{new:true})
   .exec((error,data)=>{
      if (error) return res.status(400).json({ error });
-     if(data)  res.status(201).json({ msg:"employee updated successfully!",data,
+     if(data)  res.status(201).json({ message:"employee updated successfully!",data,
     }); 
   })
 }
@@ -130,7 +148,7 @@ exports.updateEmployee=(req,res,next)=>{
   exports.getEmployeeByName=(req,res,next)=>{
     const searchField = req.query.employeename;
     if(!searchField){
-      return res.status(400).json({msg:"enter recipe name"})
+      return res.status(400).json({message:"enter employee name"})
     }
     Employee.find({employeename:{$regex:searchField,$options:'$i'}})
     .then(data=>{

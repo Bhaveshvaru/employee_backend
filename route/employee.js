@@ -10,4 +10,4 @@ router.delete("/employee/delete/:id",deleteEmployee);
 router.put("/employee/update/:id",updateEmployee);
 router.get("/employee/search",getEmployeeByName)
 
-module.exports=router
+module.exports=router;

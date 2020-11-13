@@ -32,6 +32,7 @@ const connectDB = async () => {
 
   //middleware
 app.use(cors());
+app.use('/uploads', express.static('uploads'));
 //body-parser
 app.use(bodyParser.json())
 //express fileupload 
