@@ -124,3 +124,19 @@ exports.updateEmployee=(req,res,next)=>{
     }); 
   })
 }
+
+
+  //search controller by Employeename
+  exports.getEmployeeByName=(req,res,next)=>{
+    const searchField = req.query.employeename;
+    if(!searchField){
+      return res.status(400).json({msg:"enter recipe name"})
+    }
+    Employee.find({employeename:{$regex:searchField,$options:'$i'}})
+    .then(data=>{
+      return res.status(200).json(data)
+    })
+    .catch(err=>{
+      return res.status(400).json({error:err})
+    })
+  }
