@@ -42,7 +42,8 @@ exports.createEmployee=(req,res)=>{
   });
  
     employee.save((error, data) => {
-    
+
+      //custom Error Handling
       if(error !== null){
         if(error.code === 11000){
           return res.status(400).json({message:"Email already Exists!"});
@@ -56,8 +57,8 @@ exports.createEmployee=(req,res)=>{
        }
       }
       
-     if(error) return res.status(400).json({message:"something went wrong!",error});
-
+      //sending err and data
+      if(error) return res.status(400).json({message:"something went wrong!",error});
       if (data) {
         res.status(201).json({ message:"employee added successfully!",data,
       });  
@@ -114,7 +115,7 @@ exports.deleteEmployee =(req,res,next)=>{
 
 //update employee Controller
 exports.updateEmployee=(req,res,next)=>{
-  const id= req.params.id
+  const id= req.params.id;
   const file = req.files.photo
   if(!req.files)
   {
