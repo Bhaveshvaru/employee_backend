@@ -121,27 +121,27 @@ exports.deleteEmployee =(req,res,next)=>{
 //update employee Controller
 exports.updateEmployee=(req,res,next)=>{
     const id= req.params.id;
-    const file = req.files.photo
-    if(!req.files)
-    {
-        res.status(400).json({msg:"Image was not found"});
-        return;
-    }
+    // const file = req.files.photo
+    // if(!req.files)
+    // {
+    //     res.status(400).json({msg:"Image was not found"});
+    //     return;
+    // }
     
-    let shortId=shortid.generate()
-    file.name = `photo_${shortId}_${file.name}`;
+    // let shortId=shortid.generate()
+    // file.name = `photo_${shortId}_${file.name}`;
 
-    file.mv(`uploads/${file.name}`, async err => {
-      if (err) {
-        console.error(err);
-        return res.status(500).json({err:"problem with image"})
-      }
-    })
+    // file.mv(`uploads/${file.name}`, async err => {
+    //   if (err) {
+    //     console.error(err);
+    //     return res.status(500).json({err:"problem with image"})
+    //   }
+    // })
       
-    let photo=file.name;//.file
+    // let photo=file.name;//.file
     const reqd=req.body;
-    const reqData= {reqd,photo};
-    Employee.findByIdAndUpdate(id,reqData,{new:true})
+    //const reqData= {reqd,photo};
+    Employee.findByIdAndUpdate(id,reqd,{new:true})
     .exec((error,data)=>{
       if (error) return res.status(400).json({ error });
       if(data)  res.status(201).json({ message:"employee updated successfully!",data,
